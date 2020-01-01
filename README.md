@@ -1,6 +1,8 @@
 # How To Setup Open Source Package Manager if you don't have SSH access
 
-Cut and paste the script below into ACS under 'Run SQL Scripts' and run it. and you should have Open Source Package Manager now working. 
+Cut and paste the script below into ACS under 'Run SQL Scripts' and run it. 
+
+You should have Open Source Package Manager now working (or an error log telling you why not). 
 
 ```
 create or replace table qtemp.ftpcmd(cmd char(240)) on replace delete rows;
