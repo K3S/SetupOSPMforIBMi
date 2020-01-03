@@ -37,3 +37,9 @@ where message_id = 'QSH0005'
 order by message_timestamp desc
 fetch first 1 rows only;
 ```
+
+# About K3S (King III Solutions, Inc)
+
+[K3S](https://k3s.com) is a software development company that specializes in inventory management and procurement solutions for the distribution industry. Their applications and solutions are developed to run on the IBM i OS (the best enterprise level OS!) and interface with any ERP application on any platform. 
+
+As well K3S open sources many of its [Guides & Utilities ](https://technical.k3s.com/docs/utilities/) in an effort to improve the IBM i community. 
