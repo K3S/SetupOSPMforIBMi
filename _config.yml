@@ -2,3 +2,4 @@ theme: jekyll-theme-cayman
 title: [Setup Open Source Package Manager Via ACS On IBM i]
 description: [You can use the code below to setup Open Source Package Manager on IBM i if you do not have SSH access]
 markdown: kramdown
+google_analytics: G-RHBBCCX9G2
