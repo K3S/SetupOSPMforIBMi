@@ -1,4 +1,40 @@
-theme: jekyll-theme-cayman
-title: [Setup Open Source Package Manager Via ACS On IBM i]
-description: [You can use the code below to setup Open Source Package Manager on IBM i if you do not have SSH access]
-markdown: kramdown
+title: IBM i Open Source Setup
+description: A practical guide to setting up and running open source software on IBM i — yum, RPMs, SSH, the editor workflow, and the conventions that make it work.
+remote_theme: just-the-docs/just-the-docs
+url: https://ospm.k3s.com
+
+# just-the-docs configuration
+color_scheme: light
+search_enabled: true
+heading_anchors: true
+
+aux_links:
+  "K3S on GitHub":
+    - "https://github.com/K3S"
+  "Companion: PHP/PDO/ODBC Toolkit":
+    - "https://odbcphp.k3s.com"
+  "Companion: RPG Tutorial":
+    - "https://rpgtutorial.k3s.com"
+
+# Footer
+footer_content: 'Maintained by <a href="https://k3s.com">King III Solutions, Inc.</a> &middot; Prose: <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Code samples: <a href="https://opensource.org/licenses/MIT">MIT</a>.'
+
+# Edit-this-page link
+gh_edit_link: true
+gh_edit_link_text: "Edit this page on GitHub"
+gh_edit_repository: "https://github.com/K3S/SetupOSPMforIBMi"
+gh_edit_branch: "master"
+gh_edit_view_mode: "tree"
+
+plugins:
+  - jekyll-remote-theme
+  - jekyll-seo-tag
+
+# Don't try to render the LICENSE files
+exclude:
+  - LICENSE
+  - LICENSE-PROSE
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - README.md
