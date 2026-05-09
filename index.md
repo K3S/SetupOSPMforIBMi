@@ -1,73 +1,62 @@
 ---
-title: Home
-nav_order: 1
+layout: default
+title: Setup OSPM for IBM i
+description: How to install yum and RPMs on IBM i without SSH access, using only ACS Run SQL Scripts.
 ---
 
-# IBM i Open Source Setup
+# How To Setup Open Source Package Manager if you don't have SSH access
 
-A practical guide to setting up the open-source environment on IBM i — `yum` and the RPM packages, SSH and the editor workflow, and the conventions that separate an environment you trust from one you tolerate.
+If your IBM i doesn't have SSH access — or you haven't set it up yet — you can still bootstrap the Open Source Package Manager (yum) using nothing but ACS and a SQL script. Cut and paste the script below into ACS under **Run SQL Scripts** and run it.
 
-Read it the way you'd read a runbook: skip to whatever you're stuck on, ignore the rest.
+You should have OSPM working when it finishes, or a log telling you why not.
 
----
+```sql
+create or replace table qtemp.ftpcmd(cmd char(240)) on replace delete rows;
+create or replace table qtemp.ftplog(line char(240)) on replace delete rows;
 
-## Who this is for
+insert into qtemp.ftpcmd(CMD) values
+   ('anonymous anonymous@example.com')
+  ,('namefmt 1')
+  ,('lcd /tmp')
+  ,('cd /software/ibmi/products/pase/rpms')
+  ,('bin')
+  ,('get README.md (replace')
+  ,('get bootstrap.tar.Z (replace')
+  ,('get bootstrap.sh (replace')
+  with nc
+;
 
-You administer or develop on an IBM i partition, and you want to install and use modern open-source software on it. Maybe you've already got `yum` working but you're hitting CCSID weirdness; maybe you've got a partition with no SSH and you've been told you can't bootstrap; maybe you've inherited a system where everything runs as `QSECOFR` and you'd like to fix that.
+CL:OVRDBF FILE(INPUT) TOFILE(QTEMP/FTPCMD) MBR(*FIRST) OVRSCOPE(*JOB);
+CL:OVRDBF FILE(OUTPUT) TOFILE(QTEMP/FTPLOG) MBR(*FIRST) OVRSCOPE(*JOB);
 
-This guide assumes:
+CL:FTP RMTSYS('public.dhe.ibm.com');
 
-- You can get to **5250** (whether through ACS, a third-party emulator, or `tn5250`).
-- You have **ACS (Access Client Solutions)** on your workstation.
-- You have **`*ALLOBJ`** authority, or someone who does is sitting next to you for the parts that need it.
+CL:QSH CMD('touch -C 819 /tmp/bootstrap.log; /QOpenSys/usr/bin/ksh /tmp/bootstrap.sh > /tmp/bootstrap.log 2>&1');
 
-You do **not** need to be an experienced UNIX/Linux administrator. The chapters explain the IBM i quirks where they come up.
+select
+case when (message_tokens = X'00000000')
+ then 'Bootstrapping successful! Review /tmp/README.md for more info'
+ else 'Bootstrapping failed. Consult /tmp/bootstrap.log for more info'
+end as result
+from table(qsys2.joblog_info('*')) x
+where message_id = 'QSH0005'
+order by message_timestamp desc
+fetch first 1 rows only;
+```
 
----
+## Why this works
 
-## What's covered
+ACS Run SQL Scripts can issue CL commands but can't directly run PASE binaries, and the OSPM bootstrap (`bootstrap.sh`) is a PASE script — yum and the RPM ecosystem live entirely in PASE under `/QOpenSys/pkgs/`. The script bridges that gap in four steps:
 
-The site is organized as a linear path, but each chapter stands alone:
+1. **FTP** pulls IBM's bootstrap files from `public.dhe.ibm.com` into `/tmp`.
+2. **QSH** is used as a one-line bridge from CL into PASE. The `touch -C 819` pre-creates the log file with CCSID 819 (ASCII / ISO-8859-1) so the PASE process's stdout writes back readable. Without that tag, QSH would create the stream file as EBCDIC by default and the log would render as garbage.
+3. **`/QOpenSys/usr/bin/ksh`** is the PASE Korn shell — not QSH. The full path is the explicit handoff into PASE, where `bootstrap.sh` actually needs to run.
+4. **The final SELECT** checks the joblog for QSH's completion message and reports the result back in the SQL output.
 
-- **[The mental model](mental-model.html)** — PASE vs ILE, `/QOpenSys` vs the rest of the IFS, library list vs `$PATH`. Three pages that prevent a thousand confusions.
-- **[Bootstrapping OSPM](bootstrap.html)** — installing `yum` itself. The ACS path, the no-SSH path (the original `ftp` + SQL recipe), and the dark-network case.
-- **[Package managers in 2026](package-managers.html)** — `yum` is what IBM i ships; `dnf` is an AIX thing. What that means for you, and the repos worth knowing about.
-- **[SSH and the VS Code workflow](ssh-and-vscode.html)** — enabling `*SSHD`, key setup, the Code for IBM i extension, and how to stop dropping into Qp2term.
-- **[CCSID sanity](ccsid-sanity.html)** — 819, 1208, 65535, `JOBCCSID`, `PASE_LANG`, the `attr` and `setccsid` rituals.
-- **[Service users and authority](service-users-and-authority.html)** — running daemons as something other than `QSECOFR`, `*PUBLIC` defaults, and `/QOpenSys` authority oddities.
-- **[PHP](php.html)** — Zend RPMs vs Seiden PHP+, and how to choose. Cross-links to the sibling toolkit guide.
-- **[Python](python.html)** — `python3` from `yum`, virtualenvs, and the few gotchas that PASE adds.
-- **[Node.js](node.html)** — `nodejs` from `yum`, `npm` caveats, native modules, and the version conversation.
-- **[Git on IBM i](git.html)** — installation, identity, line endings, SSH keys, and the things that bite people on day one.
-- **[ODBC and PDO](odbc.html)** — short chapter; the long version lives in the [PHP / PDO / ODBC toolkit guide](https://odbcphp.k3s.com).
-- **[What belongs in IBM i OSS](what-belongs.html)** — when to reach for `yum install`, when for a PTF, when for a licensed program product, when for RPG.
-- **[Reference](reference.html)** — repos, links, troubleshooting, acknowledgments.
+For a deeper explanation of QSH vs PASE and when to bridge between them, see [QSH vs PASE on IBM i: A Practical Guide](https://technical.k3s.com/docs/utilities/qsh-vs-pase/) on our docs site.
 
----
+## About K3S (King III Solutions, Inc)
 
-## The four-quadrant mental model
+[K3S](https://k3s.com) is a software development company that specializes in inventory management and procurement solutions for the distribution industry. Their applications and solutions are developed to run on the IBM i OS (the best enterprise level OS!) and interface with any ERP application on any platform.
 
-The single most useful thing to internalize before you start installing things is that IBM i has two userlands and two filesystems-of-thinking, and they cross-cut:
-
-|                       | **ILE (native side)**                            | **PASE (AIX-style userland)**                      |
-| --------------------- | ------------------------------------------------ | -------------------------------------------------- |
-| **Lives in**          | Libraries, `*PGM` / `*MODULE` / `*SRVPGM` objects | `/QOpenSys/pkgs/` and the rest of the IFS         |
-| **Run by**            | `QSYS` jobs, subsystems, library list             | PASE jobs, `$PATH`, environment files              |
-| **Talks to DB2 via**  | Embedded SQL, native I/O, RPG database ops       | ODBC, JDBC, `ibm_db2`, native shared libraries     |
-| **Examples**          | RPG, COBOL, CL, native SQL stored procedures     | `yum`, `php`, `python`, `node`, `git`, `bash`     |
-
-Almost every IBM i open-source confusion can be traced to forgetting which quadrant you're in. The [mental model chapter](mental-model.html) walks through it in detail.
-
----
-
-## What this guide is not
-
-- **Not a generic Linux tutorial.** When `yum`, `bash`, or `git` work the way they do everywhere else, the guide says so and moves on.
-- **Not a sales pitch for a particular vendor.** Both Zend (Perforce) and Seiden Group make distributions worth running. The guide describes the trade-offs and lets you choose.
-- **Not exhaustive.** Where the IBM-published documentation is good — and increasingly it is — the guide links to it rather than duplicating it.
-
----
-
-## Where next
-
-Start with **[The mental model](mental-model.html)** if you're new to the IBM i / PASE split, or jump straight to **[Bootstrapping OSPM](bootstrap.html)** if you already know that landscape and just need `yum` installed.
+K3S open sources many of its [Guides &amp; Utilities](https://technical.k3s.com/docs/utilities/) in an effort to improve the IBM i community.
