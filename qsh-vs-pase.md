@@ -1,8 +1,6 @@
 ---
-layout: docs
 title: "QSH vs PASE on IBM i: A Practical Guide"
 description: A practical guide to QSH and PASE on IBM i — what they actually are, why the boundary matters, and when you need to bridge between them.
-category: utilities
 ---
 
 # QSH vs PASE on IBM i: A Practical Guide
