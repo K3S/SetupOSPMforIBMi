@@ -16,6 +16,27 @@ aux_links:
   "Companion: RPG Tutorial":
     - "https://rpgtutorial.k3s.com"
 
+# External link in the sidebar
+nav_external_links:
+  - title: King III Solutions
+    url: https://k3s.com
+    hide_icon: false
+  - title: RPG Tutorial
+    url: https://rpgtutorial.k3s.com/
+    hide_icon: false
+  - title: PHP, PDO & ODBC on IBM i
+    url: https://odbcphp.k3s.com/
+    hide_icon: false
+  - title: Action API Pattern
+    url: https://action-api-pattern.k3s.com/
+    hide_icon: false
+  - title: AI Patterns For Business Systems
+    url: https://aipatterns.k3s.com
+    hide_icon: false
+  - title: IBM i AI Workers
+    url: https://ibmi-ai-workers.k3s.com
+    hide_icon: false
+
 # Footer
 footer_content: 'Maintained by <a href="https://k3s.com">King III Solutions, Inc.</a> &middot; Prose: <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Code samples: <a href="https://opensource.org/licenses/MIT">MIT</a>.'
 
