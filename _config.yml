@@ -12,13 +12,13 @@ heading_anchors: true
 ga_tracking: G-9QNQPY8BD6
 ga_tracking_anonymize_ip: true
 
+# Top-right auxiliary links
 aux_links:
-  "K3S on GitHub":
-    - "https://github.com/K3S"
-  "Companion: PHP/PDO/ODBC Toolkit":
-    - "https://odbcphp.k3s.com"
-  "Companion: RPG Tutorial":
-    - "https://rpgtutorial.k3s.com"
+  "View on GitHub":
+    - "https://github.com/K3S/SetupOSPMforIBMi"
+  "Sponsored by K3S":
+    - "https://k3s.com"
+aux_links_new_tab: true
 
 # External link in the sidebar
 nav_external_links:
