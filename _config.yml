@@ -8,6 +8,10 @@ color_scheme: light
 search_enabled: true
 heading_anchors: true
 
+# Google Analytics
+ga_tracking: G-9QNQPY8BD6
+ga_tracking_anonymize_ip: true
+
 aux_links:
   "K3S on GitHub":
     - "https://github.com/K3S"
