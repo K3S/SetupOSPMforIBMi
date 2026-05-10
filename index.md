@@ -9,6 +9,11 @@ A practical guide to setting up the open-source environment on IBM i — `yum` a
 
 Read it the way you'd read a runbook: skip to whatever you're stuck on, ignore the rest.
 
+
+[Get started](#start-here){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
+[View on GitHub](https://github.com/K3S/SetupOSPMforIBMi){: .btn .fs-5 .mb-4 .mb-md-0 }
+
+
 ---
 
 ## Who this is for
@@ -25,7 +30,7 @@ You do **not** need to be an experienced UNIX/Linux administrator. The chapters 
 
 ---
 
-## What's covered
+## Start here
 
 The site is organized as a linear path, but each chapter stands alone:
 
